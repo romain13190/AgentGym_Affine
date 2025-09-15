@@ -1,0 +1,19 @@
+[project]
+name = "agentenv-affine"
+version = "0.1.0"
+description = "AgentGym Affine environment servers and clients"
+authors = [{ name = "affine-adapter", email = "dev@example.com" }]
+dependencies = [
+  "fastapi>=0.110",
+  "uvicorn[standard]>=0.30",
+  "requests>=2.31",
+  "affine",
+]
+requires-python = ">=3.9"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["agentenv_affine"] 

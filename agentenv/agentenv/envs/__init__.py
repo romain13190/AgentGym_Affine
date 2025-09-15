@@ -12,3 +12,4 @@ from .weather import WeatherEnvClient, WeatherTask
 from .webarena import WebarenaEnvClient, WebarenaTask
 from .webshop import WebshopAdapter, WebshopEnvClient, WebshopTask
 from .searchqa import SearchQAEnvClient, SearchQATask
+from agentenv_affine.ded_env_client import AffineDedEnvClient, AffineDedTask
