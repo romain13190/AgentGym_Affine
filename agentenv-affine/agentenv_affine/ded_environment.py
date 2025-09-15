@@ -1,8 +1,8 @@
 """
-DedEnvServer autonome pour DED (sans dépendance au paquet affine).
-- Charge le dataset HF satpalsr/rl-python
-- Génère un prompt + consignes
-- Évalue un programme Python renvoyé par l'agent sur des cas de test
+Standalone DedEnvServer for DED (without dependency on affine package).
+- Loads the HF dataset satpalsr/rl-python
+- Generates a prompt + instructions
+- Evaluates a Python program returned by the agent on test cases
 """
 from __future__ import annotations
 
@@ -34,9 +34,9 @@ def _normalize(text: str) -> str:
 
 def _strip_fences(reply: Optional[str]) -> str:
     text = reply or ""
-    # supprimer balises <think>...</think>
+    # remove <think>...</think> tags
     text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL | re.IGNORECASE)
-    # extraire dernier bloc ```python ... ``` ou ``` ... ```
+    # extract last ```python ... ``` or ``` ... ``` block
     code_blocks = re.findall(r"```(?:python)?\n(.*?)```", text, flags=re.DOTALL | re.IGNORECASE)
     if code_blocks:
         return code_blocks[-1].strip()
@@ -100,7 +100,7 @@ class DedStandaloneEnv:
                 try:
                     ver_json = json.loads(ver_raw)
                 except json.JSONDecodeError:
-                    ver_json = eval(ver_raw, {"__builtins__": {}}, {})  # dataset legacy
+                    ver_json = eval(ver_raw, {"__builtins__": {}}, {})  # legacy dataset format
             else:
                 ver_json = ver_raw
         except Exception as err:
