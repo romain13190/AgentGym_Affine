@@ -14,21 +14,22 @@ def ok():
 def list_envs():
     return list(abd_env_server.envs.keys())
 
-@app.post("/create", response_model=int)
+@app.post("/create", response_model=dict)
 async def create():
-    return await abd_env_server.create()
+    env = await abd_env_server.create()
+    return {"id": env}
 
 @app.get("/observation", response_model=str)
-async def observation(env_idx: int):
-    return await abd_env_server.observation(env_idx)
+async def observation(id: int):
+    return await abd_env_server.observation(id)
 
 @app.post("/step")
 async def step(payload: dict):
-    env_idx = int(payload["env_idx"]) ; action = payload["action"]
-    obs, reward, done, info = await abd_env_server.step(env_idx, action)
+    id_ = int(payload["id"]) ; action = payload["action"]
+    obs, reward, done, info = await abd_env_server.step(id_, action)
     return {"observation": obs, "reward": reward, "done": done, "info": info}
 
 @app.post("/reset", response_model=str)
 async def reset(payload: dict):
-    env_idx = int(payload["env_idx"]) 
-    return await abd_env_server.reset(env_idx) 
+    id_ = int(payload["id"]) 
+    return await abd_env_server.reset(id_) 

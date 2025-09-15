@@ -6,7 +6,6 @@ from typing import List
 from fastapi import FastAPI
 
 from .ded_environment import ded_env_server
-from .ded_model import CreateQuery, ResetQuery, StepQuery, StepResponse
 
 app = FastAPI()
 
@@ -21,25 +20,26 @@ async def list_envs():
     return list(ded_env_server.env.keys())
 
 
-@app.post("/create", response_model=int)
-async def create(create_query: CreateQuery):
-    env = await ded_env_server.create(create_query.id)
-    return env
+@app.post("/create", response_model=dict)
+async def create():
+    env = await ded_env_server.create()
+    return {"id": env}
 
 
 @app.get("/observation", response_model=str)
-async def observation(env_idx: int):
-    return await ded_env_server.observation(env_idx)
+async def observation(id: int):
+    return await ded_env_server.observation(id)
 
 
-@app.post("/step", response_model=StepResponse)
-async def step(step_query: StepQuery):
-    observation, reward, done, _ = await ded_env_server.step(
-        step_query.env_idx, step_query.action
-    )
-    return StepResponse(observation=observation, reward=reward, done=done)
+@app.post("/step")
+async def step(payload: dict):
+    id_ = int(payload.get("id"))
+    action = payload.get("action", "")
+    observation, reward, done, _ = await ded_env_server.step(id_, action)
+    return {"observation": observation, "reward": reward, "done": done}
 
 
 @app.post("/reset", response_model=str)
-async def reset(reset_query: ResetQuery):
-    return await ded_env_server.reset(reset_query.env_idx, reset_query.id) 
+async def reset(payload: dict):
+    id_ = int(payload.get("id"))
+    return await ded_env_server.reset(id_, None) 
